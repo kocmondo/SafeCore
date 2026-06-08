@@ -14,7 +14,7 @@ The goal is to provide:
 - Historical Data Collection
 - Alarm Management
 - Maintenance Support
-- Future AI and Machine Learning Integration
+- AI and Machine Learning Integration
 
 ---
 
