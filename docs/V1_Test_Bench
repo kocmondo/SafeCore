@@ -1,0 +1,95 @@
+# SafeCore V1 – Monitorovanie na testovacej stolici
+
+## Prehľad projektu
+
+SafeCore V1 je prvý funkčný prototyp priemyselného monitorovacieho systému.
+
+Cieľom tohto projektu je zhromažďovať prevádzkové údaje z priemyselných zariadení, ukladať historické údaje a vizualizovať stav strojov v reálnom čase.
+
+---
+
+## Monitorované zariadenia
+
+Skúšobná lavica motora + čerpadla
+
+---
+
+## Hardvér
+
+### Ovládač
+
+- Siemens LOGO! 24RCE
+
+### Server
+
+- Raspberry Pi 5
+
+### Senzory
+
+- Teplota motora PT100
+- Teplota čerpadla PT100
+- Snímač teploty skrinky
+- Senzor vibrácií
+- Prúdový senzor
+
+---
+
+## Softvérový zásobník
+
+PLC
+↓
+Node-RED
+↓
+MariaDB
+↓
+Grafana
+↓
+Banka
+↓
+Ovládací panel SafeCore
+
+---
+
+## Monitorované parametre
+
+- Teplota motora
+- Teplota čerpadla
+- Teplota škatule
+- Vibrácie motora
+- Spotreba prúdu
+- Stav chladiaceho ventilátora
+
+---
+
+## Funkcie ovládacieho panela
+
+- Monitorovanie v reálnom čase
+- Historické trendy
+- Vizualizácia teploty
+- Monitorovanie vibrácií
+- Prehľad stavu zariadenia
+
+---
+
+## Snímky obrazovky
+
+Snímky obrazovky budú pridané po nasadení v teréne.
+
+---
+
+## Získané ponaučenia
+
+- Komunikácia s PLC
+- Integrácia Node-RED
+- Úložisko databázy
+- Dashboardy Grafana
+- Vývoj webových aplikácií vo Flasku
+
+---
+
+## Stav
+
+Aktuálny stav: Prevádzkový
+
+Verzia: V1
+Rok: 2026
