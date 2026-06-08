@@ -6,7 +6,7 @@ Industrial Monitoring Platform
 
 ## Vision
 
-SafeCore is a low-cost industrial monitoring platform designed for small and medium manufacturing companies.
+SafeCore is a industrial monitoring platform designed for small and medium manufacturing companies.
 
 The goal is to provide:
 
