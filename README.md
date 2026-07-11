@@ -66,11 +66,11 @@ Siemens LOGO!
 - Pump Temperature
 - Current
 - Box Cooling Status
-\
-\
-> Node-RED --> MariaDB --> Grafana
-/
-/
+          \
+           \
+            > Node-RED --> MariaDB --> Grafana
+           /
+          /
 Raspberry Pi 5
 - ADXL345 Vibration Sensor
 ```
