@@ -1,4 +1,4 @@
-# SafeCore
+# SafeCore Monitoring
 
 Industrial Monitoring Platform
 
