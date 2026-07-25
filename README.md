@@ -122,9 +122,6 @@ The dashboard includes:
 
 ![SafeCore installed on the test bench](images/03-monitoring-on-test-bench.jpeg)
 
-### Node-RED data-acquisition flow
-
-![SafeCore Node-RED flow](images/04-node-red-flow.jpeg)
 
 ## Project status
 
