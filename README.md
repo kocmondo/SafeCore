@@ -66,34 +66,6 @@ SWITCH --- PC[Engineering PC]
 ROUTER --- TABLET[Tablet / operator device]
 ```
 
-### Data flow
-
-```text
-PT100 sensors + current sensor
-â”‚
-â–¼
-Siemens LOGO! 24RCE
-â”‚
-â–¼
-Node-RED
-â”‚
-â–¼
-MariaDB
-â”‚
-â–¼
-Grafana
-
-ADXL345 vibration sensor
-â”‚
-â–¼
-Raspberry Pi 5
-â”‚
-â–¼
-vibration_data table
-```
-
----
-
 ## Hardware
 
 ### Controller
@@ -165,23 +137,8 @@ Responsibilities:
 
 SafeCore contains a local enclosure-temperature protection function implemented in the Siemens LOGO! program.
 
-```text
-Enclosure PT100 temperature
-â”‚
-â–¼
-Threshold: 40.2 Â°C
-â”‚
-â–¼
-LOGO! output Q1
-â”‚
-â–¼
-USB switching module
-â”‚
-â–¼
-Cooling fan ON
-```
 
-When the enclosure temperature rises above **40.2 Â°C**, LOGO! output **Q1** activates the USB switching module and powers the cooling fan.
+When the enclosure temperature rises above **40.2 °C**, LOGO! output **Q1** activates the USB switching module and powers the cooling fan.
 
 The cooling state is also stored in MariaDB and displayed in Grafana.
 
@@ -375,37 +332,6 @@ docker compose down
 
 ```bash
 docker compose logs -f
-```
-
----
-
-## Repository structure
-
-```text
-SafeCore/
-â”œâ”€â”€ README.md
-â”œâ”€â”€ docker-compose.yml
-â”œâ”€â”€ .env.example
-â”œâ”€â”€ DOCKER_MIGRATION_CHECKLIST.md
-â”œâ”€â”€ logo/
-â”‚ â”œâ”€â”€ SafeCore_Test_Bench.lsc
-â”‚ â””â”€â”€ lwe/
-â”œâ”€â”€ node-red/
-â”‚ â””â”€â”€ data/
-â”‚ â”œâ”€â”€ flows.json
-â”‚ â”œâ”€â”€ flows_cred.json
-â”‚ â””â”€â”€ package.json
-â”œâ”€â”€ mariadb/
-â”‚ â””â”€â”€ init/
-â”‚ â””â”€â”€ 01_schema.sql
-â”œâ”€â”€ grafana/
-â”‚ â”œâ”€â”€ dashboards/
-â”‚ â”‚ â””â”€â”€ safecore-dashboard.json
-â”‚ â””â”€â”€ provisioning/
-â”‚ â”œâ”€â”€ dashboards/
-â”‚ â””â”€â”€ datasources/
-â””â”€â”€ docs/
-â””â”€â”€ images/
 ```
 
 ---
