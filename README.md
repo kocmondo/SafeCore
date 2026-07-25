@@ -333,43 +333,6 @@ docker compose down
 ```bash
 docker compose logs -f
 ```
-
----
-
-## Screenshots
-
-### SafeCore monitoring enclosure
-
-![SafeCore monitoring enclosure](docs/images/01-safecore-box.jpg)
-
-### Internal electrical and control layout
-
-![Internal layout](docs/images/02-internal-layout.jpg)
-
-### Installation on the hydraulic test bench
-
-![Test-bench installation](docs/images/03-test-bench-installation.jpg)
-
-### LOGO! Web Editor HMI
-
-![LWE HMI](docs/images/04-lwe-hmi.png)
-
-### Node-RED acquisition flow
-
-![Node-RED flow](docs/images/05-node-red-flow.png)
-
-### MariaDB historical records
-
-![MariaDB data](docs/images/06-mariadb-data.png)
-
-### Grafana dashboard
-
-![Grafana dashboard](docs/images/07-grafana-dashboard.png)
-
-### Docker containers
-
-![Docker containers](docs/images/08-docker-containers.png)
-
 ---
 
 ## Example network configuration
