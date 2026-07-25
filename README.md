@@ -112,15 +112,15 @@ The dashboard includes:
 
 ### SafeCore monitoring box
 
-![SafeCore monitoring box](images/01-safecore-monitoring-box.jpeeg)
+![SafeCore monitoring box](images/01-safecore-box.jpeg)
 
 ### Internal components
 
-![SafeCore internal components](images/02-internal-components.jpeg)
+![SafeCore internal components](images/02-internal-layout.jpeg)
 
 ### Monitoring system installed on the test bench
 
-![SafeCore installed on the test bench](images/03-test-bench-monitoring.jpeg)
+![SafeCore installed on the test bench](images/03-monitoring-on-test-bench.jpeg)
 
 ### Node-RED data-acquisition flow
 
