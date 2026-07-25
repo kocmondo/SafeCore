@@ -1,399 +1,142 @@
-# SafeCore Monitoring and Data Collection
+# SafeCore Industrial Monitoring System
 
-**Portable industrial monitoring, data-acquisition and visualisation platform for hydraulic test-bench equipment**
+SafeCore is a compact industrial monitoring and data-logging project built with a Siemens LOGO! PLC and a Raspberry Pi 5.
 
-![SafeCore monitoring enclosure](docs/images/01-safecore-box.jpg)
+The system reads machine-condition data, stores it in MariaDB and displays live and historical values in Grafana on a touchscreen display.
 
----
-
-## Overview
-
-SafeCore is a portable industrial monitoring and data-collection system developed for a hydraulic-cylinder test bench. It combines a Siemens LOGO! controller, Raspberry Pi 5, Node-RED, MariaDB, Grafana and a browser-based LOGO! Web Editor HMI in one transportable enclosure.
-
-The project demonstrates practical integration of:
-
-- PLC programming and industrial control;
-- analogue and digital signal acquisition;
-- industrial Ethernet networking;
-- embedded Linux and Raspberry Pi;
-- real-time data collection;
-- historical database storage;
-- dashboard visualisation;
-- local browser-based HMI;
-- Docker-based software deployment.
-
-SafeCore is an engineering and university portfolio project. It is not presented as a certified commercial machine-safety system.
-
----
+This project is focused only on monitoring and data collection. It does not control the hydraulic cylinder.
 
 ## Main functions
 
-- Motor-temperature monitoring
-- Pump-temperature monitoring
-- Enclosure-temperature monitoring
+- Temperature monitoring of the enclosure, motor and pump
 - Motor-current monitoring
-- ADXL345 vibration monitoring
-- Automatic enclosure cooling
+- Vibration monitoring with an ADXL345 sensor
+- Automatic enclosure cooling above 40.2 °C
+- Data collection with Node-RED
 - Historical data storage in MariaDB
-- Real-time and historical Grafana dashboards
-- Siemens LOGO! Web Editor HMI
-- Local Ethernet and Wi-Fi access through a dedicated LAN
-- CSV export for data analysis
-- Docker deployment for Raspberry Pi services
-
----
+- Live and historical Grafana dashboards
+- Local display on a touchscreen connected to the Raspberry Pi
 
 ## System architecture
 
 ```mermaid
 flowchart LR
-PT100[PT100 temperature sensors] --> LOGO[Siemens LOGO! 24RCE]
-CURRENT[Current sensor] --> LOGO
-LOGO --> NR[Node-RED]
-LOGO --> LWE[LOGO! Web Editor HMI]
+PT100["PT100 temperature sensors"] --> LOGO["Siemens LOGO! 24RCE"]
+CURRENT["Current sensor"] --> LOGO
 
-ADXL[ADXL345 vibration sensor] --> RPI[Raspberry Pi 5]
-RPI --> VCOL[Vibration collector]
+LOGO --> RPI["Raspberry Pi 5"]
+ADXL["ADXL345 vibration sensor"] --> RPI
 
-NR --> DB[(MariaDB)]
-VCOL --> DB
-DB --> GRAFANA[Grafana dashboards]
-
-ROUTER[Router / Wi-Fi access point] --- SWITCH[5-port Ethernet switch]
-SWITCH --- LOGO
-SWITCH --- RPI
-SWITCH --- PC[Engineering PC]
-ROUTER --- TABLET[Tablet / operator device]
+RPI --> NR["Node-RED"]
+NR --> DB[("MariaDB")]
+DB --> GRAFANA["Grafana"]
+GRAFANA --> HMI["Touchscreen HMI"]
 ```
 
 ## Hardware
 
-### Controller
-
-**Siemens LOGO! 24RCE**
-
-Responsibilities:
-
-- acquisition of analogue and digital signals;
-- PT100 and current-sensor scaling;
-- local control logic;
-- manual and automatic operating modes;
-- extend and retract command logic;
-- timer and delay processing;
-- output interlocks;
-- enclosure-temperature supervision;
-- automatic cooling control;
-- variable-memory mapping for LWE;
-- communication values used by Node-RED.
-
-### Edge server
-
-**Raspberry Pi 5**
-
-Responsibilities:
-
-- Node-RED runtime;
-- MariaDB database;
-- Grafana server;
-- ADXL345 vibration acquisition;
-- Docker host;
-- local touchscreen interface;
-- engineering and service access.
-
-### Sensors
-
+- Siemens LOGO! 24RCE
+- Raspberry Pi 5
+- Touchscreen display
 - PT100 enclosure-temperature sensor
 - PT100 motor-temperature sensor
 - PT100 pump-temperature sensor
+- Current sensor
 - ADXL345 vibration sensor
-- Motor-current sensor
-- Digital cooling-state feedback
-
-### Network
-
-- Dedicated router / Wi-Fi access point
-- 5-port Ethernet switch
-- Siemens LOGO! Ethernet connection
-- Raspberry Pi Ethernet connection
-- Engineering PC connection
-- Tablet access to LWE and dashboards
-- Independent SafeCore LAN
-
-### Electrical protection and enclosure equipment
-
-- Residual-current protection device
-- Miniature circuit breaker
-- 24 V DC power distribution
-- DIN-rail terminal blocks
-- Raspberry Pi power supply
-- Integrated touchscreen display
-- Enclosure ventilation fan
+- Ethernet switch
+- Enclosure cooling fan
 - USB switching module controlled by LOGO! output Q1
-- Portable protective enclosure
+- Electrical protection and power-distribution components
 
----
+## Software
 
-## Automatic enclosure cooling
+### Siemens LOGO! Soft Comfort
 
-SafeCore contains a local enclosure-temperature protection function implemented in the Siemens LOGO! program.
+The LOGO! program reads and processes temperature and current signals.
 
+It also controls the enclosure cooling fan. When the enclosure temperature rises above 40.2 °C, output Q1 activates the USB switching module and starts the fan.
 
-When the enclosure temperature rises above **40.2 °C**, LOGO! output **Q1** activates the USB switching module and powers the cooling fan.
+### Node-RED
 
-The cooling state is also stored in MariaDB and displayed in Grafana.
+Node-RED runs on the Raspberry Pi and performs the main data-acquisition tasks:
 
-This function remains inside the PLC and does not depend on Node-RED, MariaDB or Grafana.
+- Reads values from the Siemens LOGO! PLC
+- Processes monitoring values
+- Adds timestamps
+- Writes records to MariaDB
+- Connects the monitoring system to Grafana
 
----
+### MariaDB
 
-## Siemens LOGO! Soft Comfort program
+MariaDB stores the historical monitoring data.
 
-The LOGO! project contains the machine-monitoring and local-control logic, including:
+#### Table: `test_bench_monitoring1`
 
-- analogue-input acquisition;
-- PT100 scaling;
-- current-sensor scaling;
-- pressure and timing value processing;
-- manual and automatic modes;
-- extend and retract requests;
-- interlocks between opposing commands;
-- delay timers;
-- remaining-time values;
-- digital output control;
-- enclosure-cooling control;
-- LWE variable-memory mapping;
-- communication values used by Node-RED.
+- `id`
+- `timestamp`
+- `temp_box`
+- `temp_motor`
+- `temp_pump`
+- `current_amp`
+- `box_ccooling`
 
-Store the engineering project here:
+#### Table: `vibration_data`
 
-```text
-logo/SafeCore_Test_Bench.lsc
-```
+- `id`
+- `timestamp`
+- `vibration`
 
----
+### Grafana
 
-## LOGO! Web Editor HMI
+Grafana displays the collected data as live and historical dashboards.
 
-The operator interface is served directly by the LOGO! web server.
+The dashboard includes:
 
-Typical local address:
+- Motor vibration
+- Motor current
+- Motor temperature
+- Pump temperature
+- Enclosure temperature
+- Cooling-fan status
 
-```text
-http://192.168.0.3/webroot/main.htm
-```
+## How the system works
 
-The current HMI contains:
+1. PT100 sensors and the current sensor send monitoring values to the Siemens LOGO! PLC.
+2. The Raspberry Pi reads the PLC data through Node-RED.
+3. The ADXL345 vibration sensor sends vibration data directly to the Raspberry Pi.
+4. Node-RED stores the monitoring values in MariaDB.
+5. Grafana reads the database and displays the values on the touchscreen.
+6. Historical data remains available for later analysis.
 
-- TEST selector
-- MANUAL / AUTO selector
-- STOP command
-- Pressure setpoint
-- Actual pressure
-- Time setting
-- Time remaining
-- EXTEND VALVE
-- RETRACT VALVE
-- EXTEND CYLINDER
-- RETRACT CYLINDER
-- STOP EXTEND
-- STOP RETRACT
-- Status indicators
+## Project images
 
-Store the exported LWE project here:
+### SafeCore monitoring box
 
-```text
-logo/lwe/
-```
+![SafeCore monitoring box](docs/images/01-safecore-monitoring-box.jpg)
 
----
+### Internal components
 
-## Node-RED
+![SafeCore internal components](docs/images/02-internal-components.jpg)
 
-Node-RED is the communication and data-routing layer between the PLC and MariaDB.
+### Monitoring system installed on the test bench
 
-Responsibilities:
+![SafeCore installed on the test bench](docs/images/03-test-bench-monitoring.jpg)
 
-- reading values from Siemens LOGO!;
-- converting raw PLC values into engineering units;
-- attaching timestamps;
-- validating data;
-- preparing database inserts;
-- writing process records to MariaDB;
-- providing debug and diagnostic information.
+### Node-RED data-acquisition flow
 
-Store the exported flow here:
+![SafeCore Node-RED flow](docs/images/04-node-red-flow.jpg)
 
-```text
-node-red/data/flows.json
-```
+## Project status
 
-Do not publish real passwords or credential secrets.
+The current prototype provides:
 
----
-
-## MariaDB
-
-MariaDB provides persistent historical storage.
-
-### Process-monitoring table
-
-Current table:
-
-```text
-test_bench_monitoring1
-```
-
-| Column | Description |
-|---|---|
-| `id` | Unique row identifier |
-| `timestamp` | Sample date and time |
-| `temp_box` | Enclosure temperature |
-| `temp_motor` | Motor temperature |
-| `temp_pump` | Pump temperature |
-| `current_amp` | Motor current |
-| `box_ccooling` | Cooling status |
-
-### Vibration table
-
-Current table:
-
-```text
-vibration_data
-```
-
-| Column | Description |
-|---|---|
-| `id` | Unique row identifier |
-| `timestamp` | Sample date and time |
-| `vibration` | ADXL345 vibration value |
-
-Export the exact schema from the working Raspberry Pi installation to:
-
-```text
-mariadb/init/01_schema.sql
-```
-
----
-
-## Grafana
-
-Grafana is the monitoring and diagnostics layer.
-
-The current dashboard includes:
-
-- motor-vibration trend;
-- motor-current trend;
-- current gauge;
-- motor-temperature trend and gauge;
-- pump-temperature trend and gauge;
-- enclosure-temperature trend;
-- enclosure-cooling status;
-- selectable time range;
-- automatic refresh;
-- historical review.
-
-Export the dashboard JSON to:
-
-```text
-grafana/dashboards/safecore-dashboard.json
-```
-
----
-
-## Docker deployment
-
-The Raspberry Pi software stack is deployed with Docker Compose.
-
-### Containerised services
-
-- Node-RED
-- MariaDB
-- Grafana
-
-The Siemens LOGO! program and LWE project are not Docker containers. They run inside the LOGO! controller and are stored in this repository as engineering files.
-
-The ADXL345 collector should be containerised only after the exact working Raspberry Pi acquisition script has been copied and tested with access to `/dev/i2c-1`.
-
-### Start
-
-```bash
-cp .env.example .env
-docker compose up -d
-docker compose ps
-```
-
-### Stop
-
-```bash
-docker compose down
-```
-
-### Logs
-
-```bash
-docker compose logs -f
-```
----
-
-## Example network configuration
-
-| Device | Example address |
-|---|---:|
-| Router / gateway | `192.168.0.1` |
-| Siemens LOGO! | `192.168.0.3` |
-| Raspberry Pi 5 | `192.168.0.10` |
-| Engineering PC | DHCP or static |
-| Tablet | DHCP |
-
-All devices must be connected to the same SafeCore LAN to access LWE, Grafana, Node-RED and the Raspberry Pi.
-
----
-
-## Operating concept
-
-1. Power the SafeCore enclosure.
-2. The router creates the SafeCore LAN.
-3. LOGO! starts its monitoring and local-control program.
-4. Docker starts Node-RED, MariaDB and Grafana on the Raspberry Pi.
-5. Node-RED collects PLC data and writes it to MariaDB.
-6. The vibration collector writes ADXL345 data to MariaDB.
-7. Grafana displays real-time and historical data.
-8. The operator accesses LWE from the integrated display, PC or tablet.
-
----
-
-## Implemented and tested functions
-
-- Siemens LOGO! signal acquisition
-- PT100 temperature monitoring
-- Motor-current monitoring
-- ADXL345 vibration acquisition
-- Node-RED data collection
+- Working PLC data acquisition
+- Temperature, current and vibration monitoring
 - MariaDB historical storage
 - Grafana visualisation
-- Enclosure-temperature supervision
-- Automatic fan activation above 40.2 Â°C
-- Ethernet communication
-- Local browser-based HMI
-- Remote Raspberry Pi service access
-- CSV export for analytics
-
-Docker packaging is the deployment stage of the existing Raspberry Pi system. Before publishing a release, the exact Node-RED dependencies, MariaDB schema, Grafana dashboard and vibration-collector code must be exported from the current installation and tested inside the containers.
-
----
-
-## Safety notice
-
-SafeCore is an educational and engineering prototype.
-
-It is not a certified safety controller and must not be used as the sole protective system for hydraulic machinery.
-
-Emergency stopping, pressure limitation, guarding, electrical protection and other safety functions must be implemented with appropriate safety-rated hardware and verified by a competent person.
-
----
+- Automatic enclosure cooling
+- Raspberry Pi touchscreen display
 
 ## Author
 
-**Matej Kockovsky**
-
-Industrial monitoring, automation and software-integration project.
+Matej Kockovsky
