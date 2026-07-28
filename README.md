@@ -4,7 +4,7 @@ SafeCore is a compact industrial monitoring and data-logging project built with 
 
 The system reads machine-condition data, stores it in MariaDB and displays live and historical values in Grafana on a touchscreen display.
 
-This project is focused only on monitoring and data collection. It does not control the hydraulic cylinder.
+This project is focused only on monitoring and data collection.
 
 ## Main functions
 
